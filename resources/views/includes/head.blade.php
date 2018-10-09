@@ -14,6 +14,7 @@
 {{--  <link href="public/css/paper-dashboard.css" rel="stylesheet" />  --}}
 <link rel="stylesheet" href="{{ URL('css/sidebar.css') }}">
 <link rel="stylesheet" href="{{ URL('css/cameraList.css') }}">
+<link rel="stylesheet" href="{{ URL('css/addpopup.css') }}">
 
 
 
