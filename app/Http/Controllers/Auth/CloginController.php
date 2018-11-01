@@ -27,7 +27,7 @@ class CloginController extends Controller
             // Auth::login($user);
             // return redirect('processmaker');
             // dd($request->all());
-            return view('pages.cameralist');     
+            return view('Cameralist.Indexbk');     
         }
         else {
         	return sprintf("Enter correct Username and password");
