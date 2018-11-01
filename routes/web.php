@@ -24,11 +24,15 @@ Route::get('/', function () {
     return view('forms.login');
 });
 Route::post('/clogin', 'Auth\CloginController@postlogin');
+Route::get('/cameraList', 'CameradetailsController@index');
+Route::get('/cameraList/Viewcamera/{cameraID}', 'CameradetailsController@show');
+Route::get('/cameraList/Editcamera/{cameraID}', 'CameradetailsController@edit');
+Route::get('/cameraList/Addcamera', 'CameradetailsController@create');
 
-Route::get('cameraList', function()
-{
-    return View::make('pages.cameraList');
-});
+// Route::get('cameraList', function()
+// {
+//     return View::make('pages.cameraList');
+// });
 Route::get('cameraManagement', function()
 {
     return View::make('pages.cameraManagement');

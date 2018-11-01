@@ -6,6 +6,9 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
+        "guzzle/guzzle": "~3.0",
+        "illuminate/html": "^5.0",
+        "ixudra/curl": "^6.16",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0"
     },
