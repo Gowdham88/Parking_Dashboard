@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
 
-class CameradetailsController extends Controller
+class CameraImageManagementController extends Controller
 {  
-    public function index()
+    public function index(Request $request)
     {
         // $response = Curl::to('http://10.208.1.229:3000/getCollection')
         //         ->post();
@@ -19,7 +19,7 @@ class CameradetailsController extends Controller
         $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
         // $response=json_decode($response->getBody(), true);
         $response=json_decode($response->getBody(), true);
-        return View('Cameralist.Index',compact('response'));
+        return view('CameraImageManagement.Index',compact('response'));
 
 
 
