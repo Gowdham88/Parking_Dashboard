@@ -14,7 +14,7 @@ class CameradetailsController extends Controller
         // dd($response);
         $username = 'abcd';
         // $client = new \Guzzle\Service\Client('http://10.208.1.229:3000');
-        $client = new \Guzzle\Service\Client(env('NODE_SERVER', '10.208.16.160').':3000');
+        $client = new \Guzzle\Service\Client(env('NODE_SERVER', 'http://10.208.16.160').':3000');
         // dd(config("camera"));
         $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
         // $response=json_decode($response->getBody(), true);
@@ -40,7 +40,7 @@ class CameradetailsController extends Controller
     }
     public function show($cameraID)
     {
-        $client = new \Guzzle\Service\Client(env('NODE_SERVER', '10.208.16.160').':3000');
+        $client = new \Guzzle\Service\Client(env('NODE_SERVER', 'http://10.208.16.160').':3000');
         $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
         $response=json_decode($response->getBody(), true);
         // dd($response);
@@ -59,7 +59,7 @@ class CameradetailsController extends Controller
     }
     public function edit($cameraID)
     {
-        $client = new \Guzzle\Service\Client(env('NODE_SERVER', '10.208.16.160').':3000');
+        $client = new \Guzzle\Service\Client(env('NODE_SERVER', 'http://10.208.16.160').':3000');
         $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
         $response=json_decode($response->getBody(), true);
         foreach($response as $object)
