@@ -14,15 +14,6 @@
 
         <form action="{{ action('CameraImageManagementController@index') }}" method="get">
 
-            <div class="alert alert-info">
-                <select name="action" id="action">
-                    <option value="none">None</option>
-                    <option value="mask">Mask</option>
-                    <option value="view">View</option>
-                </select>
-                <button>Ok</button>
-            </div>
-
             <table class="camera-list-table-js table table-striped">
                 <thead>
                 <tr>
@@ -39,15 +30,13 @@
                         <td>{{$object['cameraID']}}</td>
                         <td><a href="{{$object['cameraImageUrl']}}">{{$object['cameraImageUrl']}}</a></td>
                         <td>
-                            <a href="#" class="pop">
+                            <a class="pop">
                                 <img src="{{$object['cameraImageUrl']}}" class="img-responsive">
                             </a>
                         </td>
                         <td>{{$object['cameraLocationName']}}</td>
-                        {{--  <td><input type="button" value="View" onclick="SomeDeleteRowFunction(this)"/></td>            --}}
                         <td>
-                            <a class="btn btn-success btn-xs" value="View" href="{{url('cameraList/Viewcamera')}}/{{$object['cameraID']}}">VIEW</a>
-                            <a class="btn btn-info btn-xs" value="View" href="{{url('cameraList/Editcamera')}}/{{$object['cameraID']}}">EDIT</a>
+                            <a class="btn btn-info btn-xs" value="Mask/Unmask" href="{{action('CameraImageManagementController@manageMasking', $object['cameraID'])}}">Mask/Unmask</a>
                         </td>
                     </tr>
                 @endforeach
