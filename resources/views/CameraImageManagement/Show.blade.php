@@ -98,7 +98,7 @@
                 points.push([firstX, firstY]);
                 c.beginPath();
                 c.moveTo(x,y);
-                c.fillRect(x,y,2,2);
+                c.fillRect(x,y,3,3);
             }
             else{
                 points.push([x,y]);
