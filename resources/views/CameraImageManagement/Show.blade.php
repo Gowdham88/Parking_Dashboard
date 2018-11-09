@@ -106,6 +106,35 @@
                 c.stroke();
             }
         }
-    })
+    });
+
+   @foreach($drawables as $drawable)
+       c.fillStyle='{{ $drawable['colors'][1] }}';
+       c.strokeStyle='{{ $drawable['colors'][0] }}';
+       @foreach($drawable['points'] as $point)
+          @if ($loop->first)
+             points.push([{{$point[0]}},{{$point[1]}}]);
+             c.lineTo({{$point[0]}},{{$point[1]}});
+             c.stroke();
+             c.fillRect({{$point[0]}},{{$point[1]}},3,3);
+             @continue
+          @endif
+          @if ($loop->last)
+             c.lineTo({{$point[0]}},{{$point[1]}});
+             points.push([{{$point[0]}},{{$point[1]}}]);
+             polygons.push(points);
+             points = [];
+             c.stroke();
+             c.fill();
+             c.closePath();
+             clickCount=0;
+             i++;
+             @continue
+          @endif
+             points.push([{{$point[0]}},{{$point[1]}}]);
+             c.lineTo({{$point[0]}},{{$point[1]}});
+             c.stroke();
+       @endforeach
+   @endforeach
 </script>
 </html>
