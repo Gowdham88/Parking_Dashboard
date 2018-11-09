@@ -70,6 +70,8 @@
 
     document.querySelector("#clear").addEventListener("click",()=>{
         c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+        polygons = [];
+        points = [];
     });
 
 
@@ -96,6 +98,7 @@
                 points.push([firstX, firstY]);
                 c.beginPath();
                 c.moveTo(x,y);
+                c.fillRect(x,y,2,2);
             }
             else{
                 points.push([x,y]);
