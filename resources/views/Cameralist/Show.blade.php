@@ -23,52 +23,52 @@
                <div class="form-group {{ $errors->has('camid') ? 'has-error' : ''}}">
                      <label for="camid" class="col-md-3 col-form-label text-md-right">{{ __('Camera ID') }}</label>
                      <div class="col-md-6">
-                        <input id="camid" type="camid" readonly class="form-control{{ $errors->has('camid') ? ' is-invalid' : '' }}" name="camid" value="{{$object['cameraID']}}" required autofocus>
+                        <input id="camid" type="text" readonly class="form-control{{ $errors->has('camid') ? ' is-invalid' : '' }}" name="camid" value="{{$camera['cameraID']}}" required autofocus>
                      </div>
                </div>    
             </div>
             <br><br>
             <div class="col-md-12">
                <div class="form-group {{ $errors->has('camloc') ? 'has-error' : ''}}">
-                      <label for="camloc" class="col-md-3 col-form-label text-md-right">{{ __('Camera Location') }}</label>
+                      <label for="location" class="col-md-3 col-form-label text-md-right">{{ __('Camera Location') }}</label>
                        <div class="col-md-6">
-                          <input id="camloc" type="camloc" readonly class="form-control" value="{{$object['cameraLocationName']}}" required autofocus>
+                          <input name="location" id="location" type="text" readonly class="form-control" value="{{$camera['cameraLocationName']}}" required autofocus>
                        </div>
                </div> 
            </div>
             <br><br>
             <div class="col-md-12">
                <div class="form-group {{ $errors->has('camlatlong') ? 'has-error' : ''}}">
-                     <label for="camlatlong" class="col-md-3 col-form-label text-md-right">{{ __('Camera Lat') }}</label>
+                     <label for="lat" class="col-md-3 col-form-label text-md-right">{{ __('Camera Lat') }}</label>
                      <div class="col-md-6">
-                        <input id="camlatlong" type="camlat" readonly class="form-control" value="{{$object['cameraLat']}}" required autofocus>
+                        <input name="lat" id="lat" type="camlat" readonly class="form-control" value="{{$camera['cameraLat']}}" required autofocus>
                      </div>
                </div>
            </div>
            <br><br>
             <div class="col-md-12">
                <div class="form-group {{ $errors->has('camlatlong') ? 'has-error' : ''}}">
-                     <label for="camlatlong" class="col-md-3 col-form-label text-md-right">{{ __('Camera Long') }}</label>
+                     <label for="lng" class="col-md-3 col-form-label text-md-right">{{ __('Camera Long') }}</label>
                      <div class="col-md-6">
-                        <input id="camlatlong" type="camlong" readonly class="form-control" value="{{$object['cameraLong']}}" required autofocus>
+                        <input name="lng" id="lng" type="camlong" readonly class="form-control" value="{{$camera['cameraLong']}}" required autofocus>
                      </div>
                </div>
            </div>
            <br><br>
             <div class="col-md-12">
                <div class="form-group {{ $errors->has('camurl') ? 'has-error' : ''}}">
-                     <label for="camurl" class="col-md-3 col-form-label text-md-right">{{ __('Camera URL') }}</label>
+                     <label for="url" class="col-md-3 col-form-label text-md-right">{{ __('Camera URL') }}</label>
                      <div class="col-md-6">
-                        <input id="camurl" type="camurl" readonly class="form-control" value="{{$object['cameraImageUrl']}}" required autofocus>
+                        <input id="url" name="url" type="text" readonly class="form-control" value="{{$camera['cameraImageUrl']}}" required autofocus>
                      </div>
                </div>
            </div>
            <br><br>
             <div class="col-md-12">
                <div class="form-group {{ $errors->has('camflen') ? 'has-error' : ''}}">
-                     <label for="camflen" class="col-md-3 col-form-label text-md-right">{{ __('CameraFocalLength') }}</label>
+                     <label for="flen" class="col-md-3 col-form-label text-md-right">{{ __('CameraFocalLength') }}</label>
                      <div class="col-md-6">
-                        <input id="camflen" type="camflen" readonly class="form-control" value="{{'TBD'}}" required autofocus>
+                        <input name="flen" id="flen" type="camflen" readonly class="form-control" value="{{'TBD'}}" required autofocus>
                      </div>
                </div>
            </div>

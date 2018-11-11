@@ -25,7 +25,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($response as $object)
+                @foreach($data as $object)
                     <tr>
                         <td>{{$object['cameraID']}}</td>
                         <td><a href="{{$object['cameraImageUrl']}}">{{$object['cameraImageUrl']}}</a></td>

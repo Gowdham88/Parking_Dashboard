@@ -2,55 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Workers\FireStore;
 use Illuminate\Http\Request;
-use Ixudra\Curl\Facades\Curl;
 
 class CameraImageManagementController extends Controller
-{  
+{
+
+    private $fireStore;
+
+    public function __construct()
+    {
+        $this->fireStore = new FireStore();
+    }
+
     public function index()
     {
-        $client = new \Guzzle\Service\Client(env('NODE_SERVER', '10.208.16.160').':3000');
-        $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
-        $response=json_decode($response->getBody(), true);
-        return view('CameraImageManagement.Index',compact('response'));
+
+        $data = $this->fireStore->getCollection();
+        return view('CameraImageManagement.Index',compact('data'));
 
     }
 
-    public function manageMasking($camId) {
-        $client = new \Guzzle\Service\Client(env('NODE_SERVER', 'http://10.208.16.160').':3000');
-        $response = $client->post('getCollection',null,['collectionName'=>'camera'])->send();
-        $response=json_decode($response->getBody(), true);
+    public function manageMasking($camId)
+    {
+        $camera = $this->fireStore->get($camId);
 
-        foreach($response as $object)
-        {
-            if($object['cameraID'] === $camId)
-            {
-                try {
-                    list($width, $height) = getimagesize($object['cameraImageUrl']);
-                    $width /= 2;
-                    $height /= 2;
-
-                } catch (\Exception $exception) {
-                    abort(404);
-                }
-                $drawables = $this->getPolygonsToDraw($object);
-                return view('CameraImageManagement.Show',compact('object', 'width', 'height', 'drawables'));
-            }
-
+        if (!$camera) {
+            abort(404);
         }
+
+        try {
+            list($width, $height) = getimagesize($camera['cameraImageUrl']);
+            $width /= 2;
+            $height /= 2;
+
+        } catch (\Exception $exception) {
+            abort(404);
+        }
+
+        $drawables = $this->getPolygonsToDraw($camera['maskData']);
+
+        return view('CameraImageManagement.Show',compact('camera', 'width', 'height', 'drawables'));
     }
 
     /**
-     * @param $item
+     * @param $maskData
      * @return array|null
      * There is /2 because to fit in screen, I have divided the dimension by 2
      */
-    private function getPolygonsToDraw($item) {
-        if (!isset($item['maskData'])) {
+    private function getPolygonsToDraw($maskData) {
+        if (!count($maskData)) {
             return [];
         }
 
-        $maskData = $item['maskData'];
         $masks = [];
 
         foreach ($maskData as $key => $maskDatum) {

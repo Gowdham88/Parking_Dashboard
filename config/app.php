@@ -163,7 +163,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 //        Maatwebsite\Excel\ExcelServiceProvider::class,
-        Illuminate\Html\HtmlServiceProvider::class,
+//        Illuminate\Html\HtmlServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
 
         /*

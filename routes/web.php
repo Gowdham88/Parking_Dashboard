@@ -6,9 +6,12 @@ Route::post('/clogin', 'Auth\CloginController@postlogin');
 Route::get('/cameraList', 'CameradetailsController@index');
 Route::get('/cameraManagement', 'CameraImageManagementController@index');
 Route::get('/cameraManagement/mask-unmask/{camId}', 'CameraImageManagementController@manageMasking');
-Route::get('/cameraList/Viewcamera/{cameraID}', 'CameradetailsController@show');
-Route::get('/cameraList/Editcamera/{cameraID}', 'CameradetailsController@edit');
-Route::get('/cameraList/Addcamera', 'CameradetailsController@create');
+Route::get('/cameraList/add', 'CameradetailsController@create');
+Route::get('/cameraList/{cameraID}/edit', 'CameradetailsController@edit');
+Route::get('/cameraList/{cameraID}', 'CameradetailsController@show');
+Route::put('/cameraList/{id}', 'CameradetailsController@update');
+Route::delete('/cameraList/{id}', 'CameradetailsController@destroy');
+Route::post('/cameraList', 'CameradetailsController@store');
 
 Route::get('Reports', function()
 {

@@ -28,10 +28,11 @@
          </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="Save">Save Points</button>
       </div>
       <div id="app">
-         <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $object['cameraImageUrl'] }}');background-size: cover"></canvas>
+         <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $camera['cameraImageUrl'] }}');background-size: cover"></canvas>
       </div>
    </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
 <script>
     function hexToRgb(hex) {
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -57,13 +58,8 @@
         c.strokeStyle=color.value;
     });
     var x,y;
-
-
-
-
     var error=5;
     var firstX,firstY;
-    c.strokeStyle="black";
     var i=0;
     var polygons=[];
     var points=[];
@@ -79,7 +75,6 @@
         x=e.clientX-canvas.offsetLeft;
         y=e.clientY-canvas.offsetTop+window.scrollY;
         clickCount++;
-        console.log("clickCount="+clickCount);
         if( (clickCount>3) && (x>=firstX-error && x<=firstX+error) && (y>=firstY-error && x<=firstX+error)){
             c.lineTo(firstX,firstY);
             points.push([firstX,firstY]);
@@ -136,5 +131,20 @@
              c.stroke();
        @endforeach
    @endforeach
+
+    col = hexToRgb('#000000');
+    rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
+    c.fillStyle=rgbacolor;
+    c.strokeStyle='#000000';
+
+    function saveData() {
+        axios.post();
+        //Save those points to PHP thing...
+    }
+
+   function drawPolygonsFromBeginning() {
+        //Get the available polygons...
+       //And start drawing them...
+   }
 </script>
 </html>
