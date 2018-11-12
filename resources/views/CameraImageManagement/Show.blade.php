@@ -56,6 +56,8 @@
 
     var canvas = document.querySelector("canvas");
     var c= canvas.getContext("2d");
+    c.font = "16px Arial";
+    ptext = "";
     var clickCount = 0;
     var color= document.querySelector("#color");
     var type = document.querySelector('#type');
@@ -99,6 +101,8 @@
             c.stroke();
             c.fill();
             c.closePath();
+            ptext = "Polygon "+polygons.length+" ("+type.value+")";
+            c.fillText(ptext,firstX,firstY);
             updatePolygonList();
             clickCount=0;
             i++;
@@ -125,7 +129,7 @@
        rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
        c.fillStyle=rgbacolor;
        c.strokeStyle="{{$drawable['color']}}";
-       @foreach($drawable['points'] as $point)
+       @foreach($drawable['points'] as $key => $point)
           @if ($loop->first)
              c.beginPath();
              points.push([{{$point[0]}},{{$point[1]}}]);
@@ -146,6 +150,8 @@
              c.stroke();
              c.fill();
              c.closePath();
+             ptext = "Polygon "+({{$key+1}})+" ({{$drawable['type']}})";
+             c.fillText(ptext,{{$point[0]}},{{$point[1]}});
              clickCount=0;
              i++;
              @continue
@@ -222,6 +228,8 @@
                     c.stroke();
                     c.fill();
                     c.closePath();
+                    ptext = "Polygon "+(i+1)+" ("+polygons[i].value+")";
+                    c.fillText(ptext,x,y);
                     continue;
                 }
                 c.lineTo(x,y);
