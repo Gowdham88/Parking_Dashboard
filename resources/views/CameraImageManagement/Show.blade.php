@@ -19,19 +19,30 @@
    </div>
    <hr />
    <br>
+   name it private properties, forbidden places, parking place, and parking places with electric chargers -> all using different colours
    <div>
       <div style="padding: 10px;">
          Pick Color: <select name="type" id="type">
-            <option value="public">Public Place</option>
-            <option value="parking">Parking</option>
-            <option value="playground">Playground</option>
-         </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="Save">Save Points</button>
+            <option value="private">Private properties</option>
+            <option value="forbidden">Forbidden area</option>
+            <option value="parking">Parking area</option>
+            <option value="road">Road/Street</option>
+            <option value="parking_with_electric_charges">Parking area with electric charges</option>
+         </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="Save" onclick="saveData()">Save Points</button>
       </div>
       <div id="app">
+         <div id="polygons-list">
+            @foreach($drawables as $key=>$drawable)
+               <div style="padding: 5px;">
+                  Polygon{{ $key+1 }} <button onclick="deletePolygon({{$key}})">Delete</button>
+               </div>
+            @endforeach
+         </div>
          <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $camera['cameraImageUrl'] }}');background-size: cover"></canvas>
       </div>
    </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
 <script>
     function hexToRgb(hex) {
@@ -47,6 +58,7 @@
     var c= canvas.getContext("2d");
     var clickCount = 0;
     var color= document.querySelector("#color");
+    var type = document.querySelector('#type');
     col = hexToRgb(color.value);
     rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
     c.fillStyle=rgbacolor;
@@ -78,7 +90,11 @@
         if( (clickCount>3) && (x>=firstX-error && x<=firstX+error) && (y>=firstY-error && x<=firstX+error)){
             c.lineTo(firstX,firstY);
             points.push([firstX,firstY]);
-            polygons.push(points);
+            polygons.push({
+                type: type.value,
+                color: color.value,
+                points: points
+            });
             points = [];
             c.stroke();
             c.fill();
@@ -104,10 +120,13 @@
     });
 
    @foreach($drawables as $drawable)
-       c.fillStyle='{{ $drawable['colors'][1] }}';
-       c.strokeStyle='{{ $drawable['colors'][0] }}';
+       col = hexToRgb("{{$drawable['color']}}");
+       rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
+       c.fillStyle=rgbacolor;
+       c.strokeStyle="{{$drawable['color']}}";
        @foreach($drawable['points'] as $point)
           @if ($loop->first)
+             c.beginPath();
              points.push([{{$point[0]}},{{$point[1]}}]);
              c.lineTo({{$point[0]}},{{$point[1]}});
              c.stroke();
@@ -117,7 +136,11 @@
           @if ($loop->last)
              c.lineTo({{$point[0]}},{{$point[1]}});
              points.push([{{$point[0]}},{{$point[1]}}]);
-             polygons.push(points);
+             polygons.push({
+                 points: points,
+                 color: "{{$drawable['color']}}",
+                 type: "{{$drawable['type']}}"
+             });
              points = [];
              c.stroke();
              c.fill();
@@ -138,13 +161,69 @@
     c.strokeStyle='#000000';
 
     function saveData() {
-        axios.post();
-        //Save those points to PHP thing...
+        axios.put("{{ action('CameraImageManagementController@updatePoints', $camera['cameraID']) }}", {
+            polygons: polygons,
+            _token: "{{ csrf_token() }}",
+            _method: "put"
+        }).then(function(response) {
+            alert("Data updated successfully!");
+        }).catch(function(error) {
+            alert('There was an error. Try again later!');
+        });
+    }
+
+    function updatePolygonList() {
+        $("#polygons-list").html("");
+        for (i=0;i<polygons.length;i++) {
+            var el = "<div style=\"padding: 5px;\">\n" +
+                "Polygon "+(i+1)+" <button onclick=\"deletePolygon("+i+")\">Delete</button>\n" +
+                "</div>";
+            $("#polygons-list").append(el);
+        }
+    }
+
+    function deletePolygon(index) {
+        let pgs = [];
+        for (i=0;i<polygons.length;i++) {
+            if (index != i) {
+                pgs.push(polygons[i]);
+            }
+        }
+        c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+        polygons = pgs;
+        drawPolygonsFromBeginning();
+        updatePolygonList();
     }
 
    function drawPolygonsFromBeginning() {
-        //Get the available polygons...
-       //And start drawing them...
+        for (i=0;i<polygons.length;i++) {
+            let pts = polygons[i].points;
+            var  lp = 0;
+            col = hexToRgb(polygons[i].color);
+            rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
+            c.fillStyle=rgbacolor;
+            c.strokeStyle=polygons[i].color;
+            for (j=0;j<pts.length;j++) {
+                let x = pts[j][0];
+                let y = pts[j][1];
+                if (lp == 0) {
+                    c.beginPath();
+                    c.moveTo(x,y);
+                    c.fillRect(x,y,3,3);
+                    lp++;
+                    continue;
+                }
+                if (j == pts.length-1) {
+                    c.lineTo(x,y);
+                    c.stroke();
+                    c.fill();
+                    c.closePath();
+                    continue;
+                }
+                c.lineTo(x,y);
+                c.stroke();
+            }
+        }
    }
 </script>
 </html>

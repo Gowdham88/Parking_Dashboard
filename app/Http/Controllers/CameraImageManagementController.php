@@ -33,14 +33,11 @@ class CameraImageManagementController extends Controller
 
         try {
             list($width, $height) = getimagesize($camera['cameraImageUrl']);
-            $width /= 2;
-            $height /= 2;
-
         } catch (\Exception $exception) {
             abort(404);
         }
 
-        $drawables = $this->getPolygonsToDraw($camera['maskData']);
+        $drawables = $this->getPolygonsToDraw(isset($camera['maskData']) ? $camera['maskData'] : []);
 
         return view('CameraImageManagement.Show',compact('camera', 'width', 'height', 'drawables'));
     }
@@ -51,6 +48,13 @@ class CameraImageManagementController extends Controller
      * There is /2 because to fit in screen, I have divided the dimension by 2
      */
     private function getPolygonsToDraw($maskData) {
+
+        if (!$maskData) {
+            return [];
+        }
+
+        $maskData = json_decode($maskData);
+
         if (!count($maskData)) {
             return [];
         }
@@ -58,27 +62,27 @@ class CameraImageManagementController extends Controller
         $masks = [];
 
         foreach ($maskData as $key => $maskDatum) {
-            $masks[$key]['colors'] = $this->getColorByType($key);
+            $masks[$key]['type'] = $maskDatum->type;
+            $masks[$key]['color'] = $maskDatum->color;
             $masks[$key]['points'] = array_map(function($point) {
-                return [$point['x']/2, $point['y']/2];
-            }, $maskDatum);
+                return [$point[0], $point[1]];
+            }, $maskDatum->points);
         }
 
         return $masks;
     }
 
-    public function updatePoints(Request $request) {
-        //We require objects like many items..
-    }
+    public function updatePoints($id, Request $request) {
+        $camera = $this->fireStore->getForUpdate($id);
 
-    private function getColorByType($key) {
-        $colors = [
-            'roadPixels' => [
-                'rgba(255,0,0, 1)',
-                'rgba(255,0,0, 0.4)',
-            ]
-        ];
+        $data = json_encode($request->get('polygons'));
 
-        return isset($colors[$key]) ? $colors[$key] : ['rgba(0,0,0, 1)', 'rgba(0,0,0, 0.4)'];
+        $camera->update([
+           ['path' => 'maskData', 'value' => $data ]
+        ]);
+
+        return response()->json([
+            'status' => 'success'
+        ]);
     }
 }
