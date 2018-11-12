@@ -28,7 +28,7 @@
             <option value="parking">Parking area</option>
             <option value="road">Road/Street</option>
             <option value="parking_with_electric_charges">Parking area with electric charges</option>
-         </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="Save" onclick="saveData()">Save Points</button>
+         </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
       </div>
       <div id="app">
          <div id="polygons-list">
@@ -99,6 +99,7 @@
             c.stroke();
             c.fill();
             c.closePath();
+            updatePolygonList();
             clickCount=0;
             i++;
         }
@@ -161,14 +162,17 @@
     c.strokeStyle='#000000';
 
     function saveData() {
+        $('#updating-status').show();
         axios.put("{{ action('CameraImageManagementController@updatePoints', $camera['cameraID']) }}", {
             polygons: polygons,
             _token: "{{ csrf_token() }}",
             _method: "put"
         }).then(function(response) {
             alert("Data updated successfully!");
+            $('#updating-status').hide();
         }).catch(function(error) {
             alert('There was an error. Try again later!');
+            $('#updating-status').hide();
         });
     }
 
