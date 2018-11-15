@@ -34,7 +34,7 @@
          <div id="polygons-list">
             @foreach($drawables as $key=>$drawable)
                <div style="padding: 5px;">
-                  Polygon{{ $key+1 }} <button onclick="deletePolygon({{$key}})">Delete</button>
+                  Polygon {{ $key+1 }} <button onclick="deletePolygon({{$key}})">Delete</button>
                </div>
             @endforeach
          </div>
@@ -124,12 +124,12 @@
         }
     });
 
-   @foreach($drawables as $drawable)
+   @foreach($drawables as $key=>$drawable)
        col = hexToRgb("{{$drawable['color']}}");
        rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
        c.fillStyle=rgbacolor;
        c.strokeStyle="{{$drawable['color']}}";
-       @foreach($drawable['points'] as $key => $point)
+       @foreach($drawable['points'] as $point)
           @if ($loop->first)
              c.beginPath();
              points.push([{{$point[0]}},{{$point[1]}}]);
