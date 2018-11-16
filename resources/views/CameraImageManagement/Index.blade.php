@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('content')
+    <script>
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+        }
+    </script>
 <div class="row">
     <div class="col-md-12">
         <div style="margin: 10px;">
@@ -31,7 +36,7 @@
                         <td><a href="{{$object['cameraImageUrl']}}">{{$object['cameraImageUrl']}}</a></td>
                         <td>
                             <a class="pop">
-                                <img src="{{$object['cameraImageUrl']}}" class="img-responsive">
+                                <img data-cid="{{$object['cameraID']}}" src="{{$object['cameraImageUrl']}}" class="img-responsive">
                             </a>
                         </td>
                         <td>{{$object['cameraLocationName']}}</td>
@@ -46,11 +51,11 @@
     </div>
 
     <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg" style="width:75%;">
             <div class="modal-content">
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <img src="" class="imagepreview" style="width: 100%;" >
+                    <iframe id="ipp" class="imagepreview" style="width: 100%;height: auto;border: none;margin-top:5px;" onload="resizeIframe(this)"></iframe>
                 </div>
             </div>
         </div>
@@ -82,17 +87,19 @@
                 "ordering": true,
                 "info": true
             });
-            $('.camera-list-table-js').on( 'click', 'tr', function () {
-                $(this).toggleClass('selected');
-            } );
 
-            $('#button').click( function () {
-                alert( table.rows('.selected').data().length +' row(s) selected' );
-            } );
             $('.pop').on('click', function() {
-                $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+                $('.imagepreview').attr('src', "about:blank");
+                $('.imagepreview').contents().find('body').html("<h2>Loading Image...</h2>");
+                let camId = $(this).find('img').attr('data-cid');
+                $('.imagepreview').attr('src', "{{ action('CameraImageManagementController@showPreview') }}"+"?cid="+camId);
                 $('#imagemodal').modal('show');
             });
         } );
+    </script>
+    <script src="{{ asset('js/iframeResizer.contentWindow.min.js') }}"></script>
+    <script src="{{ asset('js/iframe.js') }}"></script>
+    <script>
+        $('#ipp').iFrameResize();
     </script>
 @endsection

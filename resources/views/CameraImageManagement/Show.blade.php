@@ -11,6 +11,16 @@
          padding: 10px;
          text-align: left;
       }
+      
+      .title-bar {
+         background: #999;
+         color: #FFF;
+         padding: 5px;
+      }
+
+      table tr td {
+         vertical-align: top;
+      }
    </style>
 </head>
 <body>
@@ -26,16 +36,25 @@
             <option value="parking">Parking area</option>
             <option value="road">Road/Street</option>
             <option value="parking_with_electric_charges">Parking area with electric charges</option>
-         </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="undo" onclick="undo()">Undo Last Delete</button> <button id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
+         </select> <button id="clear">Clear Map</button> <button id="undo" onclick="undo()">Undo Last Delete</button> <button id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
       </div>
       <div id="app">
-         <div id="polygons-list">
-            @foreach($drawables as $key=>$drawable)
-               <div style="padding: 5px;">
-                  Polygon {{ $key+1 }} <button onclick="deletePolygon({{$key}})">Delete</button>
-               </div>
-            @endforeach
-         </div>
+         <table id="polygons-list" border="0">
+            <tr>
+               <th class="title-bar">Private Area</th>
+               <th class="title-bar">Forbidden Place</th>
+               <th class="title-bar">Parking List</th>
+               <th class="title-bar">Road</th>
+               <th class="title-bar">Parking with fence</th>
+            </tr>
+            <tr>
+               <td id="privateList"></td>
+               <td id="forbiddenList"></td>
+               <td id="parkingList"></td>
+               <td id="roadList"></td>
+               <td id="parking_with_electric_chargesList"></td>
+            </tr>
+         </table>
          <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $camera['cameraImageUrl'] }}');background-size: cover"></canvas>
       </div>
    </div>
@@ -52,22 +71,35 @@
         } : null;
     }
 
+    function getColor(index) {
+        let clrs = {
+            private: '#00FFFF',
+            forbidden: '#FF0000',
+            parking: '#00FF00',
+            road: '#0000FF',
+            parking_with_electric_charges: '#FFFF00',
+        };
+
+        return clrs[index];
+    }
+
     var canvas = document.querySelector("canvas");
     var c= canvas.getContext("2d");
     c.font = "16px Arial";
     ptext = "";
     var clickCount = 0;
-    var color= document.querySelector("#color");
     var type = document.querySelector('#type');
-    col = hexToRgb(color.value);
-    rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
+    var color = getColor(type.value);
+    var col = hexToRgb(color);
+    var rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
     c.fillStyle=rgbacolor;
-    c.strokeStyle=color.value;
-    color.addEventListener("change",()=>{
-        col = hexToRgb(color.value);
+    c.strokeStyle=color;
+    type.addEventListener("change",()=>{
+        color = getColor(type.value);
+        col = hexToRgb(color);
         rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
         c.fillStyle=rgbacolor;
-        c.strokeStyle=color.value;
+        c.strokeStyle=color;
     });
     var x,y;
     var error=5;
@@ -79,6 +111,7 @@
 
     document.querySelector("#clear").addEventListener("click",()=>{
         c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+        $("#polygons-list").html('');
         polygons = [];
         points = [];
     });
@@ -93,7 +126,7 @@
             points.push([firstX,firstY]);
             polygons.push({
                 type: type.value,
-                color: color.value,
+                color: getColor(type.value),
                 points: points
             });
             points = [];
@@ -161,10 +194,12 @@
        @endforeach
    @endforeach
 
-    col = hexToRgb('#000000');
+   updatePolygonList();
+
+    col = hexToRgb(getColor(type.value));
     rgbacolor = 'rgba('+col.r+','+col.g+', '+col.b+', 0.4)';
     c.fillStyle=rgbacolor;
-    c.strokeStyle='#000000';
+    c.strokeStyle=getColor(type.value);
 
     function saveData() {
         $('#updating-status').show();
@@ -182,12 +217,17 @@
     }
 
     function updatePolygonList() {
-        $("#polygons-list").html("");
+        $("#privateList").html("");
+        $("#forbiddenList").html("");
+        $("#parkingList").html("");
+        $("#roadList").html("");
+        $("#parking_with_electric_chargesList").html("");
         for (i=0;i<polygons.length;i++) {
-            var el = "<div style=\"padding: 5px;\">\n" +
+            let polygonType = polygons[i].type;
+            let el = "<div style=\"padding: 5px;\">\n" +
                 "Polygon "+(i+1)+" <button onclick=\"deletePolygon("+i+")\">Delete</button>\n" +
                 "</div>";
-            $("#polygons-list").append(el);
+            $("#"+polygonType+'List').append(el);
         }
     }
 
@@ -198,7 +238,7 @@
                 pgs.push(polygons[i]);
             } else {
                 last_deleted_item = polygons[i];
-                $('#show').hide();
+                $('#undo').show();
             }
         }
         c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
@@ -247,6 +287,7 @@
             $('#undo').hide();
             c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
             drawPolygonsFromBeginning();
+            updatePolygonList();
         }
    }
 </script>

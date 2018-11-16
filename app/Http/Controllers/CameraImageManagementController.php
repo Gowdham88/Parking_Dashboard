@@ -85,4 +85,25 @@ class CameraImageManagementController extends Controller
             'status' => 'success'
         ]);
     }
+
+    public function showPreview(Request $request) {
+        $camera = $this->fireStore->get($request->get('cid'));
+
+        if (!$camera) {
+            abort(404);
+        }
+
+        try {
+            list($width, $height) = getimagesize($camera['cameraImageUrl']);
+            $width /= 2;
+            $height /= 2;
+        } catch (\Exception $exception) {
+            abort(404);
+        }
+
+        $drawables = $this->getPolygonsToDraw(isset($camera['maskData']) ? $camera['maskData'] : []);
+
+        return view('CameraImageManagement.preview',compact('camera', 'width', 'height', 'drawables'));
+
+    }
 }
