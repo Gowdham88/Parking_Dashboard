@@ -11,12 +11,11 @@
 </div>
 <div class="row">
     @if(Session::has('message'))
-        <div id="addpopup" class="popup">
-            <div id="popup-content">
-                <span class="close">&times;</span>
-                <p> {{ Session::get('message') }} </p>
-            </div>
-        </div>
+        @if(Session::has('message'))
+            <script>
+                alert("{{ Session::get('message') }}");
+            </script>
+        @endif
     @endif
     <table class="row">
         <tr>

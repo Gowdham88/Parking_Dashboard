@@ -82,12 +82,9 @@
                         <div class=" col-md-3">
                             <button id="addcamera" type="add" class="btn btn-primary">Update</button>
                             @if(Session::has('message'))
-                                <div id="addpopup" class="popup">
-                                    <div id="popup-content">
-                                        <span class="close">&times;</span>
-                                        <p> {{ Session::get('message') }} </p>
-                                    </div>
-                                </div>
+                                <script>
+                                    alert("{{ Session::get('message') }}");
+                                </script>
                             @endif
                         </div>
                     </div>

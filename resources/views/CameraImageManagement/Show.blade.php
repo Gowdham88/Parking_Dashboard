@@ -18,8 +18,6 @@
       <h1 class="page-header"><a href="{{ action('CameraImageManagementController@index') }}">Back</a> | Mask/Unmask Camera</h1>
    </div>
    <hr />
-   <br>
-   name it private properties, forbidden places, parking place, and parking places with electric chargers -> all using different colours
    <div>
       <div style="padding: 10px;">
          Pick Color: <select name="type" id="type">
@@ -28,7 +26,7 @@
             <option value="parking">Parking area</option>
             <option value="road">Road/Street</option>
             <option value="parking_with_electric_charges">Parking area with electric charges</option>
-         </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
+         </select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="color" class="form-control" name="color" id="color"> &nbsp;&nbsp;&nbsp;&nbsp; <button id="clear">Clear Map</button> &nbsp;&nbsp;&nbsp;&nbsp; <button id="undo" onclick="undo()">Undo Last Delete</button> <button id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
       </div>
       <div id="app">
          <div id="polygons-list">
@@ -77,6 +75,7 @@
     var i=0;
     var polygons=[];
     var points=[];
+    var last_deleted_item  = null;
 
     document.querySelector("#clear").addEventListener("click",()=>{
         c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
@@ -197,6 +196,9 @@
         for (i=0;i<polygons.length;i++) {
             if (index != i) {
                 pgs.push(polygons[i]);
+            } else {
+                last_deleted_item = polygons[i];
+                $('#show').hide();
             }
         }
         c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
@@ -228,13 +230,23 @@
                     c.stroke();
                     c.fill();
                     c.closePath();
-                    ptext = "Polygon "+(i+1)+" ("+polygons[i].value+")";
+                    ptext = "Polygon "+(i+1)+" ("+polygons[i].type+")";
                     c.fillText(ptext,x,y);
                     continue;
                 }
                 c.lineTo(x,y);
                 c.stroke();
             }
+        }
+   }
+
+   function undo() {
+        if (last_deleted_item != null) {
+            polygons.push(last_deleted_item);
+            last_deleted_item = null;
+            $('#undo').hide();
+            c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+            drawPolygonsFromBeginning();
         }
    }
 </script>
