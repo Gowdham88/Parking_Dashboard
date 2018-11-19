@@ -59,6 +59,7 @@
                <td id="side_pathList"></td>
             </tr>
          </table>
+          <br>
          <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $camera['cameraImageUrl'] }}');background-size: cover"></canvas>
       </div>
    </div>
@@ -116,9 +117,9 @@
 
     document.querySelector("#clear").addEventListener("click",()=>{
         c.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
-        $("#polygons-list").html('');
         polygons = [];
         points = [];
+        clearPolygons();
     });
 
 
@@ -140,9 +141,9 @@
             c.closePath();
             ptext = "Polygon "+polygons.length+" ("+type.value+")";
             c.fillText(ptext,firstX,firstY);
-            updatePolygonList();
             clickCount=0;
             i++;
+            updatePolygonList();
         }
         else{
             if(clickCount==1){
@@ -221,14 +222,19 @@
         });
     }
 
-    function updatePolygonList() {
+    function clearPolygons() {
         $("#privateList").html("");
         $("#forbiddenList").html("");
         $("#parkingList").html("");
         $("#roadList").html("");
         $("#side_pathList").html("");
         $("#parking_with_electric_chargesList").html("");
+    }
+
+    function updatePolygonList() {
+        clearPolygons();
         for (i=0;i<polygons.length;i++) {
+            console.log(polygons[i]);
             let polygonType = polygons[i].type;
             let el = "<div style=\"padding: 5px;\">\n" +
                 "Polygon "+(i+1)+" <button onclick=\"deletePolygon("+i+")\">Delete</button>\n" +
