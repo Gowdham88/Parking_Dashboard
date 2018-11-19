@@ -31,17 +31,17 @@
    </div>
    <div>
       <div style="padding: 10px;">
-         Pick Color: <select name="type" id="type">
+         Pick Color: <select class="form-control" style="display: inline;width: 250px;" name="type" id="type">
             <option value="private">Private properties</option>
             <option value="forbidden">Forbidden area</option>
             <option value="parking">Parking area</option>
             <option value="road">Road/Street</option>
             <option value="parking_with_electric_charges">Parking area with electric charges</option>
             <option value="side_path">Side Path</option>
-         </select> <button id="clear">Clear Map</button> <button id="undo" onclick="undo()">Undo Last Delete</button> <button id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
+         </select> <button class="btn btn-info" id="clear">Clear Map</button> <button class="btn btn-info" id="undo" onclick="undo()">Undo Last Delete</button> <button class="btn btn-success" id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
       </div>
       <div id="app">
-         <table id="polygons-list" border="0">
+         <table class="table table-condensed table-sm table-bordered table-responsive" id="polygons-list" border="0">
             <tr>
                <th class="title-bar">Private Area</th>
                <th class="title-bar">Forbidden Place</th>
@@ -237,7 +237,7 @@
             console.log(polygons[i]);
             let polygonType = polygons[i].type;
             let el = "<div style=\"padding: 5px;\">\n" +
-                "Polygon "+(i+1)+" <button onclick=\"deletePolygon("+i+")\">Delete</button>\n" +
+                "Polygon "+(i+1)+" <button class='btn btn-danger' onclick=\"deletePolygon("+i+")\">X</button>\n" +
                 "</div>";
             $("#"+polygonType+'List').append(el);
         }
