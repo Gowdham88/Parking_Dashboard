@@ -2,7 +2,7 @@
 <head>
    <title>Mask/Unmask</title>
    <style>
-      * {
+      *, h1, h2, h3, h4, h5, div {
          padding: 0;
          margin: 0;
       }
@@ -22,12 +22,13 @@
          vertical-align: top;
       }
    </style>
+   <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 </head>
 <body>
+   @include('includes.header')
    <div class="top">
-      <h1 class="page-header"><a href="{{ action('CameraImageManagementController@index') }}">Back</a> | Mask/Unmask Camera</h1>
+      <h1><a href="{{ action('CameraImageManagementController@index') }}">Back</a> | Mask/Unmask Camera</h1>
    </div>
-   <hr />
    <div>
       <div style="padding: 10px;">
          Pick Color: <select name="type" id="type">
@@ -36,6 +37,7 @@
             <option value="parking">Parking area</option>
             <option value="road">Road/Street</option>
             <option value="parking_with_electric_charges">Parking area with electric charges</option>
+            <option value="side_path">Side Path</option>
          </select> <button id="clear">Clear Map</button> <button id="undo" onclick="undo()">Undo Last Delete</button> <button id="Save" onclick="saveData()">Save Points</button> <span id="updating-status" style="display: none">Updating...</span>
       </div>
       <div id="app">
@@ -45,7 +47,8 @@
                <th class="title-bar">Forbidden Place</th>
                <th class="title-bar">Parking List</th>
                <th class="title-bar">Road</th>
-               <th class="title-bar">Parking with fence</th>
+               <th class="title-bar">Parking with electric charges</th>
+               <th class="title-bar">Side Path</th>
             </tr>
             <tr>
                <td id="privateList"></td>
@@ -53,6 +56,7 @@
                <td id="parkingList"></td>
                <td id="roadList"></td>
                <td id="parking_with_electric_chargesList"></td>
+               <td id="side_pathList"></td>
             </tr>
          </table>
          <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $camera['cameraImageUrl'] }}');background-size: cover"></canvas>
@@ -73,11 +77,12 @@
 
     function getColor(index) {
         let clrs = {
-            private: '#00FFFF',
+            private: '#35BEEF',
             forbidden: '#FF0000',
-            parking: '#00FF00',
-            road: '#0000FF',
-            parking_with_electric_charges: '#FFFF00',
+            parking: '#F8E71C',
+            road: '#03F6E6',
+            parking_with_electric_charges: '#42E704',
+            side_path: '#FFA500',
         };
 
         return clrs[index];
@@ -221,6 +226,7 @@
         $("#forbiddenList").html("");
         $("#parkingList").html("");
         $("#roadList").html("");
+        $("#side_pathList").html("");
         $("#parking_with_electric_chargesList").html("");
         for (i=0;i<polygons.length;i++) {
             let polygonType = polygons[i].type;
