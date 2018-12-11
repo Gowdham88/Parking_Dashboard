@@ -124,7 +124,7 @@
 
 
     canvas.addEventListener("click",(e)=>{
-        x=e.clientX-canvas.offsetLeft;
+        x=e.clientX-canvas.offsetLeft+window.scrollX;
         y=e.clientY-canvas.offsetTop+window.scrollY;
         clickCount++;
         if( (clickCount>3) && (x>=firstX-error && x<=firstX+error) && (y>=firstY-error && x<=firstX+error)){
