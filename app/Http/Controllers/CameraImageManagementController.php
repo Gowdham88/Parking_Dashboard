@@ -26,20 +26,22 @@ class CameraImageManagementController extends Controller
     public function manageMasking($camId)
     {
         $camera = $this->fireStore->get($camId);
-
+        
         if (!$camera) {
             abort(404);
         }
 
-        try {
-            list($width, $height) = getimagesize($camera['cameraImageUrl']);
-        } catch (\Exception $exception) {
-            abort(404);
-        }
+        list($width, $height, $imageUrl) = $this->getImageDimensions($camera['cameraImageUrl']);
 
         $drawables = $this->getPolygonsToDraw(isset($camera['maskData']) ? $camera['maskData'] : []);
 
-        return view('CameraImageManagement.Show',compact('camera', 'width', 'height', 'drawables'));
+        return view('CameraImageManagement.Show',compact('camera', 'width', 'height', 'drawables', 'imageUrl'));
+    }
+
+    private function makeImageUrl($url) {
+        return env('NODE_SERVER', 'http://127.0.0.1:3000')
+            .'/video/get/last-frame?image_url='
+            .$url;
     }
 
     /**
@@ -94,7 +96,10 @@ class CameraImageManagementController extends Controller
         }
 
         try {
-            list($width, $height) = getimagesize($camera['cameraImageUrl']);
+            list($width, $height, $imageUrl) = $this->getImageDimensions($camera['cameraImageUrl']);
+            if ($width === null || $height === null) {
+                abort(404);
+            }
             $width /= 2;
             $height /= 2;
         } catch (\Exception $exception) {
@@ -103,7 +108,37 @@ class CameraImageManagementController extends Controller
 
         $drawables = $this->getPolygonsToDraw(isset($camera['maskData']) ? $camera['maskData'] : []);
 
-        return view('CameraImageManagement.preview',compact('camera', 'width', 'height', 'drawables'));
+        return view('CameraImageManagement.preview',compact('camera', 'width', 'height', 'drawables', 'imageUrl'));
 
+    }
+
+    /**
+     * @param $url
+     * @return array
+     */
+    private function getImageDimensions($url)
+    {
+        $dimensions = [null, null];
+        $width = null;
+        $height = null;
+        try {
+            list($width, $height) = getimagesize($url);
+        } catch (\Exception $exception) {}
+
+        if ($height !== null && $width !== null) {
+            return [$width, $height, $url];
+        }
+
+
+        $imageUrl = $this->makeImageUrl($url);
+        try {
+            list($width, $height) = getimagesize($imageUrl);
+        } catch (\Exception $exception) {}
+
+        if ($height !== null && $width !== null) {
+            return [$width, $height, $imageUrl];
+        }
+
+        return $dimensions;
     }
 }

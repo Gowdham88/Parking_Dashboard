@@ -60,7 +60,7 @@
             </tr>
          </table>
           <br>
-         <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $camera['cameraImageUrl'] }}');background-size: cover"></canvas>
+         <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="background-image: url('{{ $imageUrl }}');background-size: cover"></canvas>
       </div>
    </div>
 </body>

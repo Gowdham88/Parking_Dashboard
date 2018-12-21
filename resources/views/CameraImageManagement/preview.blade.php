@@ -10,7 +10,7 @@
 </head>
 <body>
 <div id="app">
-   <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="margin: 0 auto;background-image: url('{{ $camera['cameraImageUrl'] }}');background-size: cover"></canvas>
+   <canvas id="canvas" height="{{$height}}" width="{{$width}}" style="margin: 0 auto;background-image: url('{{ $imageUrl }}');background-size: cover"></canvas>
 </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
