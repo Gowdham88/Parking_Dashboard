@@ -29,19 +29,23 @@ class CameraImageManagementController extends Controller
         
         if (!$camera) {
             abort(404);
-        }
-
-        list($width, $height, $imageUrl) = $this->getImageDimensions($camera['cameraImageUrl']);
+        } 
+        // dd($camera['cameraID']);
+        list($width, $height, $imageUrl) = $this->getImageDimensions($camera['cameraImageUrl'],$camera['cameraID']);
 
         $drawables = $this->getPolygonsToDraw(isset($camera['maskData']) ? $camera['maskData'] : []);
 
         return view('CameraImageManagement.Show',compact('camera', 'width', 'height', 'drawables', 'imageUrl'));
     }
 
-    private function makeImageUrl($url) {
-        return env('NODE_SERVER', 'http://127.0.0.1:3000')
+    public static function makeImageUrl($url,$id) {
+        $nodeUrl= env('NODE_SERVER', 'http://10.208.16.160:3000')
             .'/video/get/last-frame?image_url='
-            .$url;
+            .urlencode($url)
+            .'&id='
+            .$id;
+        // dd($nodeUrl,$url,$id);
+        return $nodeUrl;
     }
 
     /**
@@ -116,9 +120,9 @@ class CameraImageManagementController extends Controller
      * @param $url
      * @return array
      */
-    private function getImageDimensions($url)
+    private function getImageDimensions($url,$id)
     {
-        $dimensions = [null, null];
+        $dimensions = [null,null];
         $width = null;
         $height = null;
         try {
@@ -126,11 +130,13 @@ class CameraImageManagementController extends Controller
         } catch (\Exception $exception) {}
 
         if ($height !== null && $width !== null) {
+
             return [$width, $height, $url];
         }
 
 
-        $imageUrl = $this->makeImageUrl($url);
+        $imageUrl = $this->makeImageUrl($url,$id);
+        // dd($imageUrl);  
         try {
             list($width, $height) = getimagesize($imageUrl);
         } catch (\Exception $exception) {}

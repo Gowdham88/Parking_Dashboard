@@ -68,10 +68,19 @@
                <div class="form-group {{ $errors->has('camflen') ? 'has-error' : ''}}">
                      <label for="flen" class="col-md-3 col-form-label text-md-right">{{ __('CameraFocalLength') }}</label>
                      <div class="col-md-6">
-                        <input name="flen" id="flen" type="camflen" readonly class="form-control" value="{{'TBD'}}" required autofocus>
+                        <input name="flen" id="flen" type="camflen" readonly class="form-control" value="{{'TBD'}}"  autofocus>
                      </div>
                </div>
            </div>
+          <br><br>
+            <div class="col-md-12">
+                <div class="form-group {{ $errors->has('directionAngle') ? 'has-error' : ''}}">
+                    <label for="directionAngle" class="col-md-3 col-form-label text-md-right">{{ __('NorthDirectionAngle') }}</label>
+                    <div class="col-md-6">
+                        <input name="directionAngle" id="directionAngle" type="directionAngle" class="form-control" value="{{$camera['directionAngle']}}"  readonly autofocus>
+                    </div>
+                </div>
+            </div>
          </div>
       </div>
    </div>

@@ -27,7 +27,7 @@
 <body>
    @include('includes.header')
    <div class="top">
-      <h1><a href="{{ action('CameraImageManagementController@index') }}">Back</a> | Mask/Unmask Camera</h1>
+      <h1><a href="{{ url('/cameraManagement')}}">Back</a> | Mask/Unmask Camera</h1>
    </div>
    <div>
       <div style="padding: 10px;">

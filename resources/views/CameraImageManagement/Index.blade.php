@@ -27,7 +27,7 @@
                     <th>Image</th>
                     <th>Location</th>
                     <th></th>
-                </tr>
+                </tr>cvn
                 </thead>
                 <tbody>
                 @foreach($data as $object)
@@ -36,19 +36,25 @@
                         <td><a href="{{$object['cameraImageUrl']}}">{{$object['cameraImageUrl']}}</a></td>
                         <td>
                             <a class="pop">
+                                @if(strstr($object['cameraImageUrl'],".jpg") || strstr($object['cameraImageUrl'],".png")||strstr($object['cameraImageUrl'],".jpeg"))
                                 <img data-cid="{{$object['cameraID']}}" src="{{$object['cameraImageUrl']}}" class="img-responsive">
+                                @else
+
+                                <img data-cid="{{$object['cameraID']}}" src="{{ \App\Http\Controllers\CameraImageManagementController::makeImageUrl($object['cameraImageUrl'],$object['cameraID'])}}" class="img-responsive">
+                                @endif
                             </a>
                         </td>
                         <td>{{$object['cameraLocationName']}}</td>
                         <td>
-                            <a class="btn btn-info btn-xs" value="Mask/Unmask" href="{{action('CameraImageManagementController@manageMasking', $object['cameraID'])}}">Mask/Unmask</a>
+                            <a class="btn btn-info btn-xs" value="Mask/Unmask" href="{{url('/cameraManagement/mask-unmask/')}}/<?=$object['cameraID']?>">Mask/Unmask</a>
+                            <!-- <a class="btn btn-info btn-xs" value="Mask/Unmask" href="{{action('CameraImageManagementController@manageMasking', $object['cameraID'])}}">Mask/Unmask</a> -->
                         </td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
         </form>
-    </div>
+    </div> 
 
     <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" style="width:75%;">

@@ -19,7 +19,7 @@ Route::get('Reports', function()
 {
     return View::make('pages.Reports');
 });
-
+ 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

@@ -12,11 +12,13 @@ class CameradetailsController extends Controller
 
     public function __construct()
     {
+
         $this->fireStore = new FireStore();
     }
 
     public function index()
     {
+        
         $data = $this->fireStore->getCollection();
 
         return view('Cameralist.Index',compact('data'));
@@ -60,13 +62,16 @@ class CameradetailsController extends Controller
             'lat' => 'required',
             'lng' => 'required'
         ]);
-
+        
         $data = [
             'cameraLat' => $request->get('lat'),
             'cameraLong' => $request->get('lng'),
             'cameraLocationName' => $request->get('location'),
             'focalLength' => $request->get('flen'),
-            'cameraImageUrl' => $request->get('url')
+            'cameraImageUrl' => $request->get('url'),
+            'directionAngle' => $request->get('directionAngle'),
+
+            'parkingRules' => (object) $request->get('parkingRules')
         ];
 
         $camera = $this->fireStore->save($data);
@@ -104,6 +109,7 @@ class CameradetailsController extends Controller
             ['path' => 'cameraLocationName', 'value' => $request->get('location')],
             ['path' => 'focalLength', 'value' => $request->get('flen')],
             ['path' => 'cameraImageUrl', 'value' => $request->get('url')],
+            ['path' => 'directionAngle', 'value' => $request->get('directionAngle')]
         ]);
 
         return redirect()->back()->with('message', 'Camera update successful!');

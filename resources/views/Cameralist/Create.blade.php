@@ -1,5 +1,13 @@
 @extends('layouts.app')
 @section('content')
+<style type="text/css">
+  td{
+    border-style: hidden !important;
+  }
+  .borderless td, .borderless th {
+    border: none !important;
+}
+</style>
     <div class="row">
    <div class="col-lg-12">
       <h1 class="page-header">Add New Camera</h1>
@@ -70,7 +78,35 @@
                       <div class="form-group {{ $errors->has('camflen') ? 'has-error' : ''}}">
                           <label for="camflen" class="col-md-3 col-form-label text-md-right">{{ __('CameraFocalLength') }}</label>
                           <div class="col-md-6">
-                              <input name="flen" id="camflen" type="camflen" class="form-control" required autofocus>
+                              <input name="flen" id="camflen" type="camflen" class="form-control"  autofocus>
+                          </div>
+                      </div>
+                  </div>
+                  <br><br>
+                  <div class="col-md-12">
+                      <div class="form-group {{ $errors->has('parkingRules') ? 'has-error' : ''}}">
+                          <label for="parkingRules" class="col-md-3 col-form-label text-md-right">{{ __('Parking Rules') }}</label>
+                                  <input type="button" id="add" value="+" />
+                                  <input type="button" id="del" value="-" />
+                          <div class="form-group col-md-6">
+                            <table class="table" id="pr" style="border: none;outline: none;border-collapse: collapse;">
+                              <tr style="border: none;">
+                                <td>
+                                  <input name="parkingRules[]" id="parkingRules0" placeholder="Rule 1" type="text" class="form-control" autofocus>
+                                </td>
+                              </tr>
+                            </table>
+                              
+                          </div>
+                      </div>
+                  </div>
+                  <br><br>
+                  <div class="col-md-12">
+                      <div class="form-group {{ $errors->has('directionAngle') ? 'has-error' : ''}}">
+                          <label for="directionAngle" class="col-md-3 col-form-label text-md-right">{{ __('NorthDirectionAngle') }}</label>
+                          <div class="col-md-6">
+
+                            <input name="directionAngle" id="directionAngle" type="directionAngle" class="form-control"  autofocus>
                           </div>
                       </div>
                   </div>
@@ -100,13 +136,31 @@ var span = document.getElementsByClassName("close")[0];
 btn.onclick = function() {
    popup.style.display = "block";
 }
-span.onclick = function() {
-    popup.style.display = "none";
-   }
+// span.onclick = function() {
+//     popup.style.display = "none";
+//    }
 window.onclick = function(event) {
     if (event.target == popup) {
         popup.style.display = "none";
     }
 }
+
+$('#add').click(function () {
+  id=$('#pr tr').length;
+  ruleCount=id+1;
+              var markup = `<tr> 
+                              <td>
+                                <input name="parkingRules[]" id="parkingRules`+id+`" type="text" class="form-control"  autofocus placeholder="Rule `+ruleCount+`">
+                                </td>
+                              </tr>`;
+  $("#pr").append(markup);
+
+});
+$('#del').click(function () {
+    var table = $('#pr');
+    if (table.find('input:text').length > 1) {
+        table.find('input:text').last().closest('tr').remove();
+    }
+});
 </script>
 @endsection
