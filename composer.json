@@ -6,11 +6,17 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
-        "guzzle/guzzle": "~3.0",
-        "illuminate/html": "^5.0",
+        "google/cloud": "^0.86.0",
+        "google/cloud-bigquery": "^1.4",
+        "google/cloud-firestore": "^0.15.5",
+        "google/protobuf": "^v3.3.0",
+        "grpc/grpc": "^v1.1.0",
+        "guzzlehttp/guzzle": "^6.3",
         "ixudra/curl": "^6.16",
+        "kreait/firebase-php": "^4.0",
         "laravel/framework": "5.4.*",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "sensio/distribution-bundle": "~5.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

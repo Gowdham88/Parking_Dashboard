@@ -4,76 +4,121 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
+use App\Http\Workers\FireStore;
 
 class CameradetailsController extends Controller
-{  
+{
+    private $fireStore;
+
+    public function __construct()
+    {
+
+        $this->fireStore = new FireStore();
+    }
+
     public function index()
     {
-        // $response = Curl::to('http://10.208.1.229:3000/getCollection')
-        //         ->post();
-        // dd($response);
-        $username = 'abcd';
-        // $client = new \Guzzle\Service\Client('http://10.208.1.229:3000');
-        $client = new \Guzzle\Service\Client('http://10.208.16.160:3000');
-        // dd(config("camera"));
-        $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
-        // $response=json_decode($response->getBody(), true);
-        $response=json_decode($response->getBody(), true);
-        return View('Cameralist.Index',compact('response'));
+        
+        $data = $this->fireStore->getCollection();
 
+        return view('Cameralist.Index',compact('data'));
 
-
-        // foreach($response as $object)
-        //     {
-        //         $data[] = $object['cameraID'];
-        //         $data[] = $object['cameraLat'];
-        //     }
-        // // foreach ($data as $value) 
-        // //     {
-        // //          $cameraid[] = $value['cameraID'];
-        // //          $camlat[]   = $value['cameraLat'];
-        // //     }
-        // dd($data);
-
-            // dd($cameraid, $camlat);
-        // return View('Cameralist.Index');
     }
+
     public function show($cameraID)
     {
-        $client = new \Guzzle\Service\Client('http://10.208.16.160:3000');
-        $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
-        $response=json_decode($response->getBody(), true);
-        // dd($response);
-        // return View('Cameralist.Show',compact('response'));
-        foreach($response as $object)
-        {
-            if($object['cameraID'] == $cameraID)
-            {
-               return View('Cameralist.Show',compact('object'));
-               break;
-            }
-               
+
+        $camera = $this->fireStore->get($cameraID);
+
+        if (!$camera) {
+            abort(404);
         }
+
+        return view('Cameralist.Show',compact('camera'));
          
         
     }
+
     public function edit($cameraID)
     {
-        $client = new \Guzzle\Service\Client('http://10.208.16.160:3000');
-        $response = $client->post("getCollection",null,['collectionName'=>'camera'])->send();
-        $response=json_decode($response->getBody(), true);
-        foreach($response as $object)
-        {
-            if($object['cameraID'] == $cameraID)
-            {
-               return View('Cameralist.Edit',compact('object'));
-               break;
-            }
-               
+
+        $camera = $this->fireStore->get($cameraID);
+
+        if (!$camera) {
+            abort(404);
         }
+
+        return view('Cameralist.Edit',compact('camera'));
     }
+
     public function create()
     {
-        return View('Cameralist.Create');
+        return view('Cameralist.Create');
+    }
+
+    public function store(Request $request) {
+        $this->validate($request, [
+            'location' => 'required',
+            'lat' => 'required',
+            'lng' => 'required'
+        ]);
+        
+        $data = [
+            'cameraLat' => $request->get('lat'),
+            'cameraLong' => $request->get('lng'),
+            'cameraLocationName' => $request->get('location'),
+            'focalLength' => $request->get('flen'),
+            'cameraImageUrl' => $request->get('url'),
+            'directionAngle' => $request->get('directionAngle'),
+
+            'parkingRules' => (object) $request->get('parkingRules')
+        ];
+
+        $camera = $this->fireStore->save($data);
+
+        if (!$camera) {
+            return redirect()->back()->with('message', 'Camera did not add successfully!');
+        }
+
+        $cameraId = $camera->id();
+
+        $camera->update([
+            ['path' => 'cameraID', 'value' => $cameraId]
+        ]);
+
+        return redirect()->back()->with('message', 'Camera added successfully!');
+
+    }
+
+    public function update(Request $request, $id) {
+        $this->validate($request, [
+            'location' => 'required',
+            'lat' => 'required',
+            'lng' => 'required'
+        ]);
+
+        $camera = $this->fireStore->getForUpdate($id);
+
+        if (!$camera) {
+            abort(404);
+        }
+
+        $camera->update([
+            ['path' => 'cameraLat', 'value' => $request->get('lat')],
+            ['path' => 'cameraLong', 'value' => $request->get('lng')],
+            ['path' => 'cameraLocationName', 'value' => $request->get('location')],
+            ['path' => 'focalLength', 'value' => $request->get('flen')],
+            ['path' => 'cameraImageUrl', 'value' => $request->get('url')],
+            ['path' => 'directionAngle', 'value' => $request->get('directionAngle')]
+        ]);
+
+        return redirect()->back()->with('message', 'Camera update successful!');
+
+    }
+
+    public function destroy($id) {
+        $this->fireStore->getForUpdate($id)->delete();
+
+        return redirect()->back()->with('message', 'Camera deleted successfully!');
     }
 }

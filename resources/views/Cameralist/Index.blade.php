@@ -1,33 +1,46 @@
 @extends('layouts.app')
 @section('content')
 
-<div>
+<div class="row">
 <!-- <button class="btn btn-success btn-xs pull-right" type="submit" value="Add another row" onclick="addRow(this)">
         <i class="fa fa-plus-circle"></i> CAMERA
 </button> -->
-<a class="btn btn-success btn-xs pull-right" value="Add another row" href="{{url('cameraList/Addcamera')}}">
+<a class="btn btn-success btn-xs pull-right" href="{{action('CameradetailsController@create')}}">
         <i class="fa fa-plus-circle"></i> CAMERA
 </a>
 </div>
-<table>
+<div class="row">
+    @if(Session::has('message'))
+        @if(Session::has('message'))
+            <script>
+                alert("{{ Session::get('message') }}");
+            </script>
+        @endif
+    @endif
+    <table class="row">
         <tr>
-          <th>Id</th>
-          <th>Url</th>
-          <th>location</th>
-          <th></th>
+            <th>Id</th>
+            <th>Url</th>
+            <th>location</th>
+            <th></th>
         </tr>
-        @foreach($response as $object)
-          <tr>
-            <td>{{$object['cameraID']}}</td>
-            <td>{{$object['cameraImageUrl']}}</td>  
-            <td>{{$object['cameraLocationName']}}</td>
-            {{--  <td><input type="button" value="View" onclick="SomeDeleteRowFunction(this)"/></td>            --}}
-            <td>
-                  <a class="btn btn-success btn-xs" value="View" href="{{url('cameraList/Viewcamera')}}/{{$object['cameraID']}}">VIEW</a>
-                  <a class="btn btn-info btn-xs" value="View" href="{{url('cameraList/Editcamera')}}/{{$object['cameraID']}}">EDIT</a>
-            </td>
-          </tr>
-        @endforeach  
-      </table>
+        @foreach($data as $key=>$object)
+            <tr>
+                <td>{{$object['cameraID']}}</td>
+                <td>{{$object['cameraImageUrl']}}</td>
+                <td>{{$object['cameraLocationName']}}</td>
+                <td>
+                    <a class="btn btn-success btn-xs" value="View" href="{{url('cameraList/')}}/{{$object['cameraID']}}">VIEW</a>
+                    <a class="btn btn-info btn-xs" value="View" href="{{url('cameraList/')}}/{{$object['cameraID']}}/edit">EDIT</a>
+                    <form action="{{ action('CameradetailsController@destroy', $object['cameraID']) }}" method="post">
+                        {{ method_field('delete') }}
+                        {{ csrf_field() }}
+                        <button class="btn btn-info btn-xs" value="View" href="{{url('cameraList/')}}/{{$object['cameraID']}}/edit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        @endforeach
+    </table>
+</div>
 
 @stop
